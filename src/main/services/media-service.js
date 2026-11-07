@@ -132,3 +132,4 @@ class MediaService extends EventEmitter {
 }
 
 module.exports = new MediaService();
+

@@ -4,7 +4,7 @@
   "description": "Dynamic Island for Windows - Next-Gen Desktop Experience",
   "main": "src/main/main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "cmd /c \"set ELECTRON_RUN_AS_NODE=&& electron .\"",
     "build": "electron-builder --win --x64",
     "pack": "electron-builder --dir"
   },

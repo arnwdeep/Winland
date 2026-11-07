@@ -8,3 +8,4 @@ contextBridge.exposeInMainWorld('settingsApi', {
   triggerTestVolume: (val) => ipcRenderer.send('set-volume', val),
   triggerTestMedia: () => ipcRenderer.send('media-control', 'playPause')
 });
+

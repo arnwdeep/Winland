@@ -103,7 +103,12 @@ class OverlayManager {
 
   send(channel, data) {
     if (this.window && !this.window.isDestroyed() && this.window.webContents) {
-      this.window.webContents.send(channel, data);
+      try {
+        const payload = data !== undefined ? JSON.parse(JSON.stringify(data)) : null;
+        this.window.webContents.send(channel, payload);
+      } catch (err) {
+        console.warn(`[Overlay] Failed to serialize payload for ${channel}:`, err.message);
+      }
     }
   }
 
@@ -116,3 +121,4 @@ class OverlayManager {
 }
 
 module.exports = new OverlayManager();
+

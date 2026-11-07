@@ -24,3 +24,4 @@ class NotificationService extends EventEmitter {
 }
 
 module.exports = new NotificationService();
+

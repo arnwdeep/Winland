@@ -1,20 +1,31 @@
-const { clipboard } = require('electron');
 const { EventEmitter } = require('events');
 
 class ClipboardService extends EventEmitter {
   constructor() {
     super();
     this.timer = null;
+    this.clipboard = null;
     this.lastText = '';
     this.lastImageHash = '';
     this.history = [];
     this.maxHistory = 20;
   }
 
-  start(intervalMs = 800) {
-    this.lastText = clipboard.readText();
-    const img = clipboard.readImage();
-    this.lastImageHash = img.isEmpty() ? '' : img.toDataURL().slice(0, 50);
+  start(clipboardRef, intervalMs = 800) {
+    this.clipboard = clipboardRef;
+    if (!this.clipboard) return;
+
+    try {
+      if (typeof this.clipboard.readText === 'function') {
+        this.lastText = this.clipboard.readText();
+      }
+      if (typeof this.clipboard.readImage === 'function') {
+        const img = this.clipboard.readImage();
+        if (img && !img.isEmpty()) {
+          this.lastImageHash = img.toDataURL().slice(0, 50);
+        }
+      }
+    } catch (e) {}
 
     this.timer = setInterval(() => this.check(), intervalMs);
   }
@@ -27,43 +38,47 @@ class ClipboardService extends EventEmitter {
   }
 
   check() {
+    if (!this.clipboard) return;
     try {
-      const currentText = clipboard.readText();
-      const currentImage = clipboard.readImage();
-
-      if (currentText && currentText !== this.lastText) {
-        this.lastText = currentText;
-        const preview = currentText.length > 60 ? currentText.substring(0, 60) + '...' : currentText;
-        const entry = {
-          id: Date.now().toString(),
-          type: 'text',
-          content: currentText,
-          preview,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-        this.addHistory(entry);
-        this.emit('copy', entry);
-        return;
-      }
-
-      if (!currentImage.isEmpty()) {
-        const dataUrl = currentImage.toDataURL();
-        const hash = dataUrl.slice(0, 50);
-        if (hash !== this.lastImageHash) {
-          this.lastImageHash = hash;
+      if (typeof this.clipboard.readText === 'function') {
+        const currentText = this.clipboard.readText();
+        if (currentText && currentText !== this.lastText) {
+          this.lastText = currentText;
+          const preview = currentText.length > 60 ? currentText.substring(0, 60) + '...' : currentText;
           const entry = {
             id: Date.now().toString(),
-            type: 'image',
-            content: dataUrl,
-            preview: 'Image copied to clipboard',
+            type: 'text',
+            content: currentText,
+            preview,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
           this.addHistory(entry);
           this.emit('copy', entry);
+          return;
+        }
+      }
+
+      if (typeof this.clipboard.readImage === 'function') {
+        const currentImage = this.clipboard.readImage();
+        if (currentImage && !currentImage.isEmpty()) {
+          const dataUrl = currentImage.toDataURL();
+          const hash = dataUrl.slice(0, 50);
+          if (hash !== this.lastImageHash) {
+            this.lastImageHash = hash;
+            const entry = {
+              id: Date.now().toString(),
+              type: 'image',
+              content: dataUrl,
+              preview: 'Image copied to clipboard',
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            this.addHistory(entry);
+            this.emit('copy', entry);
+          }
         }
       }
     } catch (err) {
-      // Ignore transient clipboard access errors (e.g. locked by another app)
+      // Ignore transient clipboard access errors
     }
   }
 

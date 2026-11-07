@@ -29,3 +29,4 @@ contextBridge.exposeInMainWorld('api', {
   onConfigChange: (cb) => ipcRenderer.on('config-change', (_e, data) => cb(data)),
   onToggleEnabled: (cb) => ipcRenderer.on('toggle-enabled', (_e, data) => cb(data))
 });
+

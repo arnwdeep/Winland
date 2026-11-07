@@ -38,7 +38,7 @@ app.whenReady().then(() => {
   batteryService.init();
   volumeService.init();
   mediaService.init();
-  clipboardService.start(800);
+  clipboardService.start(clipboard, 800);
 
   // Service Event Forwarding to Overlay Window
   systemMonitor.on('stats', (stats) => {
@@ -175,3 +175,4 @@ app.on('window-all-closed', (e) => {
     app.quit();
   }
 });
+

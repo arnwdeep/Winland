@@ -44,3 +44,4 @@ class SettingsWindowManager {
 }
 
 module.exports = new SettingsWindowManager();
+
