@@ -1,5 +1,23 @@
 const { app, BrowserWindow, ipcMain, globalShortcut, nativeTheme, screen, clipboard } = require('electron');
 const path = require('path');
+const fs = require('fs');
+
+function logDebug(msg) {
+  try {
+    fs.appendFileSync(path.join(__dirname, '../../debug_main.log'), `[${new Date().toISOString()}] ${msg}\n`);
+  } catch (e) {}
+}
+
+process.on('uncaughtException', (err) => {
+  logDebug(`UNCAUGHT EXCEPTION: ${err.stack || err.message}`);
+});
+
+process.on('unhandledRejection', (err) => {
+  logDebug(`UNHANDLED REJECTION: ${err && (err.stack || err.message)}`);
+});
+
+logDebug('Main process started');
+
 const config = require('./config');
 const overlayManager = require('./overlay');
 const settingsWindow = require('./settings-window');
@@ -15,23 +33,34 @@ const notificationService = require('./services/notification-service');
 
 // Prevent multiple instances
 const gotTheLock = app.requestSingleInstanceLock();
+logDebug(`Got single instance lock: ${gotTheLock}`);
 if (!gotTheLock) {
+  logDebug('Exiting because another instance holds the lock');
   app.quit();
 } else {
   app.on('second-instance', () => {
+    logDebug('Second instance requested, showing settings window');
     settingsWindow.show();
   });
 }
 
 app.whenReady().then(() => {
+  logDebug('app.whenReady reached');
   // Initialize configuration
   config.init();
+  logDebug('Config initialized');
 
   // Create overlay window
   overlayManager.create();
+  logDebug('Overlay window created');
 
   // Initialize System Tray
   trayManager.init(overlayManager);
+  logDebug('Tray initialized');
+
+  // Show Settings Dashboard on startup so the user can immediately interact with and configure it
+  settingsWindow.show();
+  logDebug('Settings window shown');
 
   // Initialize background system services
   systemMonitor.start(1800);
@@ -93,9 +122,6 @@ app.whenReady().then(() => {
 
   // Windows Startup Setting
   syncStartupSetting();
-
-  // Show Settings Dashboard on startup so the user can immediately interact with and configure it
-  settingsWindow.show();
 });
 
 // Sync Login/Startup Setting
