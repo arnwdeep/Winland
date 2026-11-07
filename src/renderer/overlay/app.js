@@ -12,6 +12,14 @@ let stateTimeout = null;
 let currentConfig = null;
 let isInteracting = false;
 
+function setInteractiveSafe(val) {
+  if (window.api && typeof window.api.setInteractive === 'function') {
+    try {
+      window.api.setInteractive(val);
+    } catch (e) {}
+  }
+}
+
 // Initialize
 async function init() {
   setupClock();
@@ -85,7 +93,7 @@ function setState(newState, duration = 0) {
 function setupEventListeners() {
   island.addEventListener('mouseenter', () => {
     isInteracting = true;
-    if (window.api) window.api.setInteractive(true);
+    setInteractiveSafe(true);
   });
 
   island.addEventListener('mouseleave', () => {
@@ -95,13 +103,11 @@ function setupEventListeners() {
       return;
     }
     // Release mouse events back to windows behind
-    if (window.api) {
-      setTimeout(() => {
-        if (!isInteracting && currentState === 'idle') {
-          window.api.setInteractive(false);
-        }
-      }, 150);
-    }
+    setTimeout(() => {
+      if (!isInteracting && currentState === 'idle') {
+        setInteractiveSafe(false);
+      }
+    }, 150);
   });
 
   island.addEventListener('click', (e) => {
@@ -112,10 +118,10 @@ function setupEventListeners() {
 
     if (currentState === 'idle') {
       setState('expanded');
-      if (window.api) window.api.setInteractive(true);
+      setInteractiveSafe(true);
     } else if (currentState === 'expanded') {
       setState('idle');
-      if (window.api) window.api.setInteractive(false);
+      setInteractiveSafe(false);
     }
   });
 
@@ -202,11 +208,11 @@ function setupIPCListeners() {
 
     // Trigger Dynamic Island Volume HUD
     if (currentState !== 'expanded') {
-      if (window.api) window.api.setInteractive(true);
+      setInteractiveSafe(true);
       setState('volume', 2500);
       setTimeout(() => {
-        if (!isInteracting && currentState === 'idle' && window.api) {
-          window.api.setInteractive(false);
+        if (!isInteracting && currentState === 'idle') {
+          setInteractiveSafe(false);
         }
       }, 2600);
     }
@@ -237,11 +243,11 @@ function setupIPCListeners() {
   window.api.onClipboardCopy((clip) => {
     document.getElementById('clip-preview-text').textContent = clip.preview;
     if (currentState !== 'expanded') {
-      if (window.api) window.api.setInteractive(true);
+      setInteractiveSafe(true);
       setState('clipboard', 2800);
       setTimeout(() => {
-        if (!isInteracting && currentState === 'idle' && window.api) {
-          window.api.setInteractive(false);
+        if (!isInteracting && currentState === 'idle') {
+          setInteractiveSafe(false);
         }
       }, 2900);
     }
@@ -254,11 +260,11 @@ function setupIPCListeners() {
     document.getElementById('notif-msg').textContent = notif.message;
     document.getElementById('notif-app-icon').textContent = notif.icon === 'warning' ? '⚠️' : '🔔';
 
-    if (window.api) window.api.setInteractive(true);
+    setInteractiveSafe(true);
     setState('notification', notif.duration || 3500);
     setTimeout(() => {
-      if (!isInteracting && currentState === 'idle' && window.api) {
-        window.api.setInteractive(false);
+      if (!isInteracting && currentState === 'idle') {
+        setInteractiveSafe(false);
       }
     }, (notif.duration || 3500) + 100);
   });

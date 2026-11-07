@@ -30,6 +30,8 @@ class SettingsWindowManager {
     });
 
     this.window.loadFile(path.join(__dirname, '../renderer/settings/index.html'));
+    this.window.show();
+    this.window.focus();
 
     this.window.on('closed', () => {
       this.window = null;

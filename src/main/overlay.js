@@ -30,7 +30,7 @@ class OverlayManager {
       alwaysOnTop: true,
       skipTaskbar: true,
       resizable: false,
-      show: false,
+      show: true,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
         contextIsolation: true,
@@ -38,14 +38,21 @@ class OverlayManager {
       }
     });
 
-    this.window.setAlwaysOnTop(true, 'status');
+    this.window.setAlwaysOnTop(true);
     this.window.setVisibleOnAllWorkspaces(true);
 
     this.window.loadFile(path.join(__dirname, '../renderer/overlay/index.html'));
 
-    this.window.once('ready-to-show', () => {
-      this.window.show();
-      this.reposition(this.currentWidth, this.currentHeight);
+    this.window.show();
+    this.reposition(this.currentWidth, this.currentHeight);
+
+    this.window.on('closed', () => {
+      console.log('Overlay window closed');
+      this.window = null;
+    });
+
+    this.window.webContents.on('render-process-gone', (e, details) => {
+      console.error('Overlay render-process-gone:', details);
     });
 
     // When clicking outside while expanded, collapse to idle
@@ -88,12 +95,29 @@ class OverlayManager {
     const winX = Math.round(x + (dispW - width) / 2);
     const winY = y + topOffset;
 
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      fs.appendFileSync(path.join(__dirname, '../../debug_main.log'), `[Reposition] bounds: ${JSON.stringify(display.bounds)}, winX: ${winX}, winY: ${winY}, width: ${width}, height: ${height}\n`);
+    } catch (e) {}
+
     this.window.setBounds({
       x: winX,
       y: winY,
       width,
       height
     });
+  }
+
+  setInteractive(interactive) {
+    if (!this.window || this.window.isDestroyed()) return;
+    try {
+      if (interactive) {
+        this.window.setIgnoreMouseEvents(false);
+      } else {
+        this.window.setIgnoreMouseEvents(true, { forward: true });
+      }
+    } catch (e) {}
   }
 
   send(channel, data) {

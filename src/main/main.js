@@ -195,7 +195,12 @@ ipcMain.handle('get-clipboard-history', () => {
   return clipboardService.getHistory();
 });
 
+app.on('before-quit', () => {
+  logDebug('before-quit event fired');
+});
+
 app.on('will-quit', () => {
+  logDebug('will-quit event fired');
   globalShortcut.unregisterAll();
   systemMonitor.stop();
   batteryService.destroy();
@@ -206,7 +211,9 @@ app.on('will-quit', () => {
 
 // Don't exit when all windows are closed, stay in system tray
 app.on('window-all-closed', (e) => {
-  if (process.platform !== 'darwin' && app.isQuitting) {
+  logDebug(`window-all-closed event fired, isQuitting: ${app.isQuitting}`);
+  e.preventDefault();
+  if (app.isQuitting) {
     app.quit();
   }
 });

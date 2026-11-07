@@ -59,21 +59,39 @@ $workDir = "C:\PROJECTS\Winland"
 $si = New-Object WinLauncherDirect+STARTUPINFO
 $si.cb = [System.Runtime.InteropServices.Marshal]::SizeOf($si)
 $si.lpDesktop = "Default"
+$si.dwFlags = 1
+$si.wShowWindow = 1
 
 $pi = New-Object WinLauncherDirect+PROCESS_INFORMATION
 
-$res = [WinLauncherDirect]::CreateProcess(
+$success = [WinLauncherDirect]::CreateProcess(
     $appPath,
     $cmdLine,
     [IntPtr]::Zero,
     [IntPtr]::Zero,
     $false,
-    0,
+    0x01000000, # CREATE_BREAKAWAY_FROM_JOB
     [IntPtr]::Zero,
     $workDir,
     [ref]$si,
     [ref]$pi
 )
 
+if (-not $success) {
+    # If job breakaway is restricted, try normal creation with CREATE_NEW_PROCESS_GROUP
+    $success = [WinLauncherDirect]::CreateProcess(
+        $appPath,
+        $cmdLine,
+        [IntPtr]::Zero,
+        [IntPtr]::Zero,
+        $false,
+        0x00000200, # CREATE_NEW_PROCESS_GROUP
+        [IntPtr]::Zero,
+        $workDir,
+        [ref]$si,
+        [ref]$pi
+    )
+}
+
 $err = [System.Runtime.InteropServices.Marshal]::GetLastWin32Error()
-Write-Output "Direct CreateProcess: $res, PID: $($pi.dwProcessId), Error: $err"
+Write-Output "Direct CreateProcess: $success, PID: $($pi.dwProcessId), Error: $err"

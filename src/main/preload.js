@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('api', {
   // Window resizing & passthrough
   resizeWindow: (dimensions) => ipcRenderer.send('resize-window', dimensions),
+  setInteractive: (interactive) => ipcRenderer.send('set-interactive', interactive),
   
   // Settings & Navigation
   openSettings: () => ipcRenderer.send('open-settings'),

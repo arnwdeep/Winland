@@ -12,10 +12,8 @@ class TrayManager {
   init(overlayManager) {
     this.overlayManager = overlayManager;
     
-    const iconPath = path.join(__dirname, '../assets/tray-icon.png');
-    const icon = nativeImage.createFromPath(iconPath);
-    
-    this.tray = new Tray(icon);
+    const iconPath = path.join(__dirname, '../assets/tray-icon.ico');
+    this.tray = new Tray(iconPath);
     this.tray.setToolTip('Winland - Dynamic Island for Windows');
 
     this.updateMenu();
