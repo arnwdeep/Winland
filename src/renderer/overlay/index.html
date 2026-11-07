@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Winland Overlay</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-dark">
+  <div id="island-container">
+    <div id="island" class="island state-idle">
+      
+      <!-- IDLE / COMPACT STATE -->
+      <div id="view-idle" class="view-content">
+        <div class="idle-left">
+          <div id="idle-indicator" class="pulse-dot"></div>
+          <span id="idle-status-text">Winland</span>
+        </div>
+        <div class="idle-center">
+          <span id="idle-clock">12:00</span>
+        </div>
+        <div class="idle-right">
+          <span id="idle-battery-text">100%</span>
+          <svg id="idle-battery-icon" class="icon-small" viewBox="0 0 24 24">
+            <rect x="2" y="6" width="18" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <rect id="battery-fill" x="4" y="8" width="12" height="8" rx="1.5" fill="currentColor"/>
+            <path d="M22 10v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- VOLUME HUD POPUP -->
+      <div id="view-volume" class="view-content hud-view" style="display: none;">
+        <svg class="hud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <div class="hud-bar-wrapper">
+          <div id="volume-bar-fill" class="hud-bar-fill" style="width: 50%;"></div>
+        </div>
+        <span id="volume-val-text" class="hud-value">50%</span>
+      </div>
+
+      <!-- NOTIFICATION POPUP -->
+      <div id="view-notification" class="view-content notif-view" style="display: none;">
+        <div class="notif-badge">
+          <span id="notif-app-icon">🔔</span>
+        </div>
+        <div class="notif-details">
+          <div class="notif-header">
+            <span id="notif-app-name" class="notif-app">System</span>
+            <span id="notif-time" class="notif-time">Just now</span>
+          </div>
+          <div id="notif-title" class="notif-title">Title</div>
+          <div id="notif-msg" class="notif-message">Message text goes here...</div>
+        </div>
+      </div>
+
+      <!-- CLIPBOARD POPUP -->
+      <div id="view-clipboard" class="view-content clip-view" style="display: none;">
+        <svg class="clip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+          <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+        </svg>
+        <div class="clip-details">
+          <span class="clip-label">Copied to Clipboard</span>
+          <span id="clip-preview-text" class="clip-text">Sample copied text</span>
+        </div>
+      </div>
+
+      <!-- EXPANDED DASHBOARD VIEW -->
+      <div id="view-expanded" class="view-content expanded-view" style="display: none;">
+        
+        <!-- Navigation bar -->
+        <div class="expanded-tabs">
+          <button class="tab-btn active" data-tab="tab-media">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+            Media
+          </button>
+          <button class="tab-btn" data-tab="tab-system">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+            </svg>
+            System
+          </button>
+          <button class="tab-btn" data-tab="tab-focus">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+              <polyline points="12 7 12 12 15 15" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Focus
+          </button>
+          <button class="tab-btn" data-tab="tab-clipboard">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 16H5V5h2v3h10V5h2v14z"/>
+            </svg>
+            Clips
+          </button>
+          <button id="btn-open-settings" class="tab-btn icon-only" title="Settings">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- TAB 1: MEDIA -->
+        <div id="tab-media" class="tab-pane active">
+          <div class="media-container">
+            <div class="album-art-wrap">
+              <div id="album-art" class="album-art">🎵</div>
+              <div class="visualizer-bars" id="visualizer-bars">
+                <span class="vbar"></span>
+                <span class="vbar"></span>
+                <span class="vbar"></span>
+                <span class="vbar"></span>
+              </div>
+            </div>
+            <div class="media-details">
+              <div id="media-title" class="track-title">Midnight City</div>
+              <div id="media-artist" class="track-artist">M83 - Windows Media</div>
+              
+              <div class="track-progress-bar">
+                <div id="track-progress-fill" class="progress-fill" style="width: 35%;"></div>
+              </div>
+
+              <div class="media-controls">
+                <button id="media-prev" class="control-btn" title="Previous">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                  </svg>
+                </button>
+                <button id="media-play" class="control-btn play-btn" title="Play/Pause">
+                  <svg id="play-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                  <svg id="pause-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="display: none;">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                  </svg>
+                </button>
+                <button id="media-next" class="control-btn" title="Next">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: SYSTEM STATS -->
+        <div id="tab-system" class="tab-pane">
+          <div class="system-stats-grid">
+            <div class="stat-card">
+              <span class="stat-label">CPU LOAD</span>
+              <div class="stat-row">
+                <span id="stat-cpu-val" class="stat-value">12%</span>
+                <div class="stat-bar-bg">
+                  <div id="stat-cpu-bar" class="stat-bar-fill" style="width: 12%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">MEMORY</span>
+              <div class="stat-row">
+                <span id="stat-ram-val" class="stat-value">48%</span>
+                <div class="stat-bar-bg">
+                  <div id="stat-ram-bar" class="stat-bar-fill" style="width: 48%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">BATTERY & POWER</span>
+              <div class="stat-row">
+                <span id="stat-battery-val" class="stat-value">100%</span>
+                <span id="stat-battery-status" class="stat-sub">AC Connected</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">SYSTEM UPTIME</span>
+              <div class="stat-row">
+                <span id="stat-uptime-val" class="stat-value">3h 42m</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: FOCUS & TIMER -->
+        <div id="tab-focus" class="tab-pane">
+          <div class="focus-wrap">
+            <div class="focus-timer-display" id="focus-display">25:00</div>
+            <div class="focus-actions">
+              <button class="preset-btn" data-time="300">5m</button>
+              <button class="preset-btn active" data-time="1500">25m</button>
+              <button class="preset-btn" data-time="2700">45m</button>
+              <button id="btn-toggle-timer" class="action-btn">Start</button>
+              <button id="btn-reset-timer" class="action-btn secondary">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: CLIPBOARD -->
+        <div id="tab-clipboard" class="tab-pane">
+          <div class="clipboard-list" id="clipboard-list">
+            <div class="clip-empty">No items in clipboard history yet.</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

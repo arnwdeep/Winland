@@ -1,0 +1,54 @@
+{
+  "name": "winland",
+  "version": "1.0.0",
+  "description": "Dynamic Island for Windows - Next-Gen Desktop Experience",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "pack": "electron-builder --dir"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arnwdeep/Winland.git"
+  },
+  "keywords": [
+    "dynamic-island",
+    "windows",
+    "fluent-design",
+    "overlay",
+    "media-player",
+    "system-monitor",
+    "pomodoro"
+  ],
+  "author": "Arnadeep",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/arnwdeep/Winland/issues"
+  },
+  "homepage": "https://github.com/arnwdeep/Winland#readme",
+  "devDependencies": {
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.winland.app",
+    "productName": "Winland",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Winland"
+    }
+  }
+}

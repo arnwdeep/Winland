@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Winland Settings</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="fluent-body">
+  <div class="settings-app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <div class="pill-preview"></div>
+        </div>
+        <div class="brand-text">
+          <h2>Winland</h2>
+          <span>Dynamic Island for Windows</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-page="page-general">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          General
+        </button>
+        <button class="nav-item" data-page="page-appearance">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          Appearance
+        </button>
+        <button class="nav-item" data-page="page-modules">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+          Modules
+        </button>
+        <button class="nav-item" data-page="page-triggers">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          Test Triggers
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span>Winland v1.0.0</span>
+        <span class="status-indicator">● Active</span>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      
+      <!-- PAGE: GENERAL -->
+      <section id="page-general" class="page-section active">
+        <div class="page-header">
+          <h1>General Settings</h1>
+          <p>Control system startup, monitor assignment, and behavior.</p>
+        </div>
+
+        <div class="card">
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Enable Dynamic Island</label>
+              <span>Keep the Dynamic Island active and floating on your screen</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chk-enabled" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Launch at Windows Startup</label>
+              <span>Automatically start Winland when you sign in to Windows</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chk-startup">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Target Display</label>
+              <span>Choose which monitor displays the Dynamic Island</span>
+            </div>
+            <select id="select-display" class="fluent-select">
+              <option value="primary">Primary Display</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>HUD Auto-Hide Duration</label>
+              <span>How long volume, clipboard, and notifications remain visible</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" id="range-autohide" min="1500" max="6000" step="500" value="3000">
+              <span id="val-autohide">3.0s</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: APPEARANCE -->
+      <section id="page-appearance" class="page-section">
+        <div class="page-header">
+          <h1>Appearance & Styling</h1>
+          <p>Customize themes, dimensions, and fluid animations.</p>
+        </div>
+
+        <div class="card">
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Theme</label>
+              <span>Follow Windows system theme or choose matte dark / frosted light</span>
+            </div>
+            <div class="theme-picker">
+              <button class="theme-btn active" data-theme="system">System</button>
+              <button class="theme-btn" data-theme="dark">Dark</button>
+              <button class="theme-btn" data-theme="light">Light</button>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Top Screen Offset</label>
+              <span>Distance from the very top edge of the display (pixels)</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" id="range-topoffset" min="0" max="40" step="2" value="10">
+              <span id="val-topoffset">10px</span>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Corner Radius</label>
+              <span>Roundness of the pill and expanded island geometry</span>
+            </div>
+            <div class="range-wrap">
+              <input type="range" id="range-radius" min="12" max="28" step="1" value="18">
+              <span id="val-radius">18px</span>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Animation Profile</label>
+              <span>Choose between snappy, natural, and ultra-smooth spring physics</span>
+            </div>
+            <select id="select-animation" class="fluent-select">
+              <option value="fast">Snappy (Fast)</option>
+              <option value="normal" selected>Natural Spring (Recommended)</option>
+              <option value="smooth">Cinematic Smooth</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: MODULES -->
+      <section id="page-modules" class="page-section">
+        <div class="page-header">
+          <h1>Active Modules</h1>
+          <p>Toggle individual intelligent widgets on or off.</p>
+        </div>
+
+        <div class="card">
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Media Player & Live Sessions</label>
+              <span>Windows media session integration and music visualizer</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="mod-media" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Hardware Volume HUD</label>
+              <span>Display animated Dynamic Island HUD when adjusting volume</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="mod-volume" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Clipboard Manager & Preview</label>
+              <span>Detect new copy events and show instant preview and history</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="mod-clipboard" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>System Monitor (CPU & RAM)</label>
+              <span>Real-time CPU and memory load indicators</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="mod-system" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Battery & Power Management</label>
+              <span>Battery percentage, charger connection, and low power alerts</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="mod-battery" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Focus & Pomodoro Timer</label>
+              <span>Built-in productivity sessions with countdown alarms</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="mod-timer" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: TEST TRIGGERS -->
+      <section id="page-triggers" class="page-section">
+        <div class="page-header">
+          <h1>Live Test Triggers</h1>
+          <p>Instantly test dynamic island animations and system popups.</p>
+        </div>
+
+        <div class="card">
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Test System Notification</label>
+              <span>Trigger a simulated notification pill expansion</span>
+            </div>
+            <button id="btn-test-notif" class="fluent-btn">Trigger Alert</button>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Test Volume HUD</label>
+              <span>Simulate volume change event (75%)</span>
+            </div>
+            <button id="btn-test-volume" class="fluent-btn">Trigger Volume</button>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Test Low Battery Warning</label>
+              <span>Simulate low battery alert (15%)</span>
+            </div>
+            <button id="btn-test-battery" class="fluent-btn">Trigger Battery</button>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Toggle Music Playback</label>
+              <span>Send global media play/pause command</span>
+            </div>
+            <button id="btn-test-media" class="fluent-btn">Play / Pause</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>
