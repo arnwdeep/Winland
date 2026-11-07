@@ -1,8 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
-  // Mouse passthrough
-  setInteractive: (interactive) => ipcRenderer.send('set-interactive', interactive),
+  // Window resizing & passthrough
+  resizeWindow: (dimensions) => ipcRenderer.send('resize-window', dimensions),
   
   // Settings & Navigation
   openSettings: () => ipcRenderer.send('open-settings'),
@@ -27,6 +27,7 @@ contextBridge.exposeInMainWorld('api', {
   onClipboardCopy: (cb) => ipcRenderer.on('clipboard-copy', (_e, data) => cb(data)),
   onNotification: (cb) => ipcRenderer.on('notification', (_e, data) => cb(data)),
   onConfigChange: (cb) => ipcRenderer.on('config-change', (_e, data) => cb(data)),
-  onToggleEnabled: (cb) => ipcRenderer.on('toggle-enabled', (_e, data) => cb(data))
+  onToggleEnabled: (cb) => ipcRenderer.on('toggle-enabled', (_e, data) => cb(data)),
+  onToggleExpand: (cb) => ipcRenderer.on('toggle-expand', () => cb()),
+  onBlurCollapse: (cb) => ipcRenderer.on('blur-collapse', () => cb())
 });
-

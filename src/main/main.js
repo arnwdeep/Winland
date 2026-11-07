@@ -82,7 +82,7 @@ app.whenReady().then(() => {
     overlayManager.send('theme-updated', { isDark, system: true });
   });
 
-  // Global Hotkey (Alt+Space or Super+Alt+I)
+  // Global Hotkey (Alt+Shift+I)
   try {
     globalShortcut.register('Alt+Shift+I', () => {
       overlayManager.send('toggle-expand');
@@ -93,6 +93,9 @@ app.whenReady().then(() => {
 
   // Windows Startup Setting
   syncStartupSetting();
+
+  // Show Settings Dashboard on startup so the user can immediately interact with and configure it
+  settingsWindow.show();
 });
 
 // Sync Login/Startup Setting
@@ -109,6 +112,12 @@ function syncStartupSetting() {
 }
 
 // IPC Handlers
+ipcMain.on('resize-window', (event, dimensions) => {
+  if (dimensions && dimensions.width && dimensions.height) {
+    overlayManager.reposition(dimensions.width, dimensions.height);
+  }
+});
+
 ipcMain.on('set-interactive', (event, interactive) => {
   overlayManager.setInteractive(interactive);
 });

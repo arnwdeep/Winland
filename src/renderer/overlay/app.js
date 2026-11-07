@@ -36,6 +36,19 @@ function setState(newState, duration = 0) {
 
   currentState = newState;
 
+  // Dynamically resize Electron window bounds to perfectly wrap island
+  const dimensionMap = {
+    idle: { width: 230, height: 54 },
+    volume: { width: 310, height: 62 },
+    clipboard: { width: 350, height: 66 },
+    notification: { width: 410, height: 92 },
+    expanded: { width: 460, height: 235 }
+  };
+
+  if (window.api && window.api.resizeWindow && dimensionMap[newState]) {
+    window.api.resizeWindow(dimensionMap[newState]);
+  }
+
   // Update DOM classes
   island.className = `island state-${newState}`;
 
@@ -136,11 +149,26 @@ function setupEventListeners() {
 function setupIPCListeners() {
   if (!window.api) return;
 
+  // Blur auto-collapse
+  if (window.api.onBlurCollapse) {
+    window.api.onBlurCollapse(() => {
+      if (currentState === 'expanded') {
+        setState('idle');
+      }
+    });
+  }
+
+  // Global toggle expand
+  if (window.api.onToggleExpand) {
+    window.api.onToggleExpand(() => {
+      setState(currentState === 'expanded' ? 'idle' : 'expanded');
+    });
+  }
+
   // Toggle expand hotkey
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && currentState === 'expanded') {
       setState('idle');
-      window.api.setInteractive(false);
     }
   });
 

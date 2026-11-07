@@ -5,9 +5,8 @@ const config = require('./config');
 class OverlayManager {
   constructor() {
     this.window = null;
-    this.isExpanded = false;
-    this.overlayWidth = 600;
-    this.overlayHeight = 380;
+    this.currentWidth = 230;
+    this.currentHeight = 54;
   }
 
   create() {
@@ -15,22 +14,22 @@ class OverlayManager {
 
     const display = this.getTargetDisplay();
     const { x, y, width } = display.bounds;
+    const topOffset = config.get('topOffset') || 10;
 
-    const winX = Math.round(x + (width - this.overlayWidth) / 2);
-    const winY = y; // At the very top edge of the display
+    const winX = Math.round(x + (width - this.currentWidth) / 2);
+    const winY = y + topOffset;
 
     this.window = new BrowserWindow({
       x: winX,
       y: winY,
-      width: this.overlayWidth,
-      height: this.overlayHeight,
+      width: this.currentWidth,
+      height: this.currentHeight,
       frame: false,
       transparent: true,
       hasShadow: false,
       alwaysOnTop: true,
       skipTaskbar: true,
       resizable: false,
-      focusable: false, // Don't steal focus
       show: false,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
@@ -39,24 +38,25 @@ class OverlayManager {
       }
     });
 
-    // Make window stay above full-screen and standard windows
-    this.window.setAlwaysOnTop(true, 'screen-saver', 1);
-    this.window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-
-    // Initial click-through: ignore mouse events on transparent regions
-    this.window.setIgnoreMouseEvents(true, { forward: true });
+    this.window.setAlwaysOnTop(true, 'status');
+    this.window.setVisibleOnAllWorkspaces(true);
 
     this.window.loadFile(path.join(__dirname, '../renderer/overlay/index.html'));
 
     this.window.once('ready-to-show', () => {
       this.window.show();
-      this.reposition();
+      this.reposition(this.currentWidth, this.currentHeight);
     });
 
-    // Handle screen display metric changes
-    screen.on('display-metrics-changed', () => this.reposition());
-    screen.on('display-added', () => this.reposition());
-    screen.on('display-removed', () => this.reposition());
+    // When clicking outside while expanded, collapse to idle
+    this.window.on('blur', () => {
+      this.send('blur-collapse');
+    });
+
+    // Screen metric changes
+    screen.on('display-metrics-changed', () => this.reposition(this.currentWidth, this.currentHeight));
+    screen.on('display-added', () => this.reposition(this.currentWidth, this.currentHeight));
+    screen.on('display-removed', () => this.reposition(this.currentWidth, this.currentHeight));
 
     return this.window;
   }
@@ -75,30 +75,25 @@ class OverlayManager {
     return screen.getPrimaryDisplay();
   }
 
-  reposition() {
+  reposition(width = this.currentWidth, height = this.currentHeight) {
     if (!this.window || this.window.isDestroyed()) return;
 
-    const display = this.getTargetDisplay();
-    const { x, y, width } = display.bounds;
+    this.currentWidth = width;
+    this.currentHeight = height;
 
-    const winX = Math.round(x + (width - this.overlayWidth) / 2);
-    const winY = y;
+    const display = this.getTargetDisplay();
+    const { x, y, width: dispW } = display.bounds;
+    const topOffset = config.get('topOffset') || 10;
+
+    const winX = Math.round(x + (dispW - width) / 2);
+    const winY = y + topOffset;
 
     this.window.setBounds({
       x: winX,
       y: winY,
-      width: this.overlayWidth,
-      height: this.overlayHeight
+      width,
+      height
     });
-  }
-
-  setInteractive(interactive) {
-    if (!this.window || this.window.isDestroyed()) return;
-    if (interactive) {
-      this.window.setIgnoreMouseEvents(false);
-    } else {
-      this.window.setIgnoreMouseEvents(true, { forward: true });
-    }
   }
 
   send(channel, data) {
@@ -121,4 +116,3 @@ class OverlayManager {
 }
 
 module.exports = new OverlayManager();
-
